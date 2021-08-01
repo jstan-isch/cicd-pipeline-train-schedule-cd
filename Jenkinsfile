@@ -9,6 +9,10 @@ pipeline {
             }
         }
         
+        options {
+          timestamps()
+        }
+        
         stage('DeployToStaging') {
             when {
                 branch 'master'
