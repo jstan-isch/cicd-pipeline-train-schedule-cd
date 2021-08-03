@@ -17,7 +17,7 @@ pipeline {
         stage('DeployToStaging') {
             when {
                 expression {
-                    branch == 'master'
+                    branch 'master'
                 }
             }
             steps {
