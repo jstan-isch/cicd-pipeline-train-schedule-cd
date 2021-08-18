@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                echo "${params.PERSON}"
+                echo "${params.PERSON} running jenkins deployment"
                 echo 'Running build automation'
                 sh './gradlew build'
                 archiveArtifacts artifacts: 'dist/trainSchedule.zip',
@@ -16,16 +16,15 @@ pipeline {
             }
         }
 
-        stage('staging'){
+        stage('staging') {
             when {
-
                 branch 'master'
             }
             steps {
-                withCredentials([usernamePassword(credentialsId: 'staging', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]){
+                withCredentials([usernamePassword(credentialsId: 'staging', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
                     sshPublisher(
                         alwaysPublishFromMaster: true,
-                        failOnError: true
+                        failOnError: true,
                         continueOnError: false,
                         publishers: [
                             configName: 'staging',
@@ -37,9 +36,7 @@ pipeline {
                                 sourceFiles: 'dist/trainSchedule.zip',
                                 removePrefix: 'dist/',
                                 removeDirectory: '/tmp',
-                                execCommand: 'sudo /usr/bin/systemctl stop train-schedule \
-                                 && rm -rf /opt/train-schedule/* unzip trainSchedule.zip -d /opt/train-schedule \
-                                 && /usr/bin/systemctl start train-schedule'
+                                execCommand: 'sudo /usr/bin/systemctl stop train-schedule && rm -rf /opt/train-schedule/* && unzip trainSchedule.zip -d /opt/train-schedule && /usr/bin/systemctl start train-schedule'
                             ]
                         ]
                     )
@@ -47,21 +44,20 @@ pipeline {
             }
         }
 
-        stage('deploy to staging server'){
+        stage('deploy') {
             when {
-
                 branch 'master'
             }
             steps {
                 input 'Deploy to production server?'
                 milestone(1)
-                withCredentials([usernamePassword(credentialsId: 'staging', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]){
+                withCredentials([usernamePassword(credentialsId: 'deploy', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
                     sshPublisher(
                         alwaysPublishFromMaster: true,
-                        failOnError: true
+                        failOnError: true,
                         continueOnError: false,
                         publishers: [
-                            configName: 'staging',
+                            configName: 'deploy',
                             sshCredential: [
                                 username: '$USERNAME',
                                 encryptedPassphrase: '$USERPASS'
@@ -70,9 +66,7 @@ pipeline {
                                 sourceFiles: 'dist/trainSchedule.zip',
                                 removePrefix: 'dist/',
                                 removeDirectory: '/tmp',
-                                execCommand: 'sudo /usr/bin/systemctl stop train-schedule \
-                                 && rm -rf /opt/train-schedule/* unzip trainSchedule.zip -d /opt/train-schedule \
-                                 && /usr/bin/systemctl start train-schedule'
+                                execCommand: 'sudo /usr/bin/systemctl stop train-schedule && rm -rf /opt/train-schedule/* unzip trainSchedule.zip -d /opt/train-schedule && /usr/bin/systemctl start train-schedule'
                             ]
                         ]
                     )
