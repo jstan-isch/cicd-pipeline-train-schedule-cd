@@ -29,8 +29,8 @@ pipeline {
                         publishers: [
                             configName: 'staging',
                             sshCredential: [
-                                username: "$USERNAME",
-                                encryptedPassphrase: "$USERPASS"
+                                username: "${USERNAME}",
+                                encryptedPassphrase: "${USERPASS}"
                             ],
                             transfers: [
                                 sourceFiles: 'dist/trainSchedule.zip',
@@ -59,8 +59,8 @@ pipeline {
                         publishers: [
                             configName: 'production',
                             sshCredential: [
-                                username: "$USERNAME",
-                                encryptedPassphrase: "$USERPASS"
+                                username: "${USERNAME}",
+                                encryptedPassphrase: "${USERPASS}"
                             ],
                             transfers: [
                                 sourceFiles: 'dist/trainSchedule.zip',
