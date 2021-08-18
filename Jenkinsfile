@@ -9,7 +9,7 @@ pipeline {
             steps {
                 echo "${params.PERSON} running jenkins deployment"
                 echo 'Running build automation'
-                sh './gradlew build --no-deamon'
+                sh './gradlew build --no-daemon'
                 archiveArtifacts artifacts: 'dist/trainSchedule.zip',
                     allowEmptyArchive: true
                 fingerprint targets: 'dist/trainSchedule.zip'
