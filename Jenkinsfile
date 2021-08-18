@@ -9,7 +9,7 @@ pipeline {
             steps {
                 echo "${params.PERSON} running jenkins deployment"
                 echo 'Running build automation'
-                sh './gradlew build'
+                sh './gradlew build --no-deamon'
                 archiveArtifacts artifacts: 'dist/trainSchedule.zip',
                     allowEmptyArchive: true
                 fingerprint targets: 'dist/trainSchedule.zip'
@@ -29,8 +29,8 @@ pipeline {
                         publishers: [
                             configName: 'staging',
                             sshCredential: [
-                                username: '$USERNAME',
-                                encryptedPassphrase: '$USERPASS'
+                                username: "$USERNAME",
+                                encryptedPassphrase: "$USERPASS"
                             ],
                             transfers: [
                                 sourceFiles: 'dist/trainSchedule.zip',
@@ -57,10 +57,10 @@ pipeline {
                         failOnError: true,
                         continueOnError: false,
                         publishers: [
-                            configName: 'deploy',
+                            configName: 'production',
                             sshCredential: [
-                                username: '$USERNAME',
-                                encryptedPassphrase: '$USERPASS'
+                                username: "$USERNAME",
+                                encryptedPassphrase: "$USERPASS"
                             ],
                             transfers: [
                                 sourceFiles: 'dist/trainSchedule.zip',
