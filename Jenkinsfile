@@ -13,7 +13,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', keyFileVariable: 'USERPASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'webserver_login', usernameVariable: 'USERNAME', passwordVariable: 'USERPASS')]) {
                     sshPublisher(
                         failOnError: true,
                         continueOnError: false,
